@@ -1,0 +1,43 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+#game {
+  width: 500px;
+  height: 200px;
+  border: 1px solid black;
+}
+
+#character {
+  width: 40px;
+  height: 70px;
+  background-color: purple;
+  position: relative;
+  top: 130px;
+}
+.animate {
+  animation: moveit 500ms;
+  animation-fill-mode: forwards;
+}
+@keyframes moveit {
+  0% {
+    left: 0;
+  }
+  50% {
+    left: 40px;
+    top: 100px;
+  }
+  100% {
+    left: 80px;
+  }
+}
+
+#block {
+  width: 20px;
+  height: 20px;
+  background-color: teal;
+  position: relative;
+  top: 130px;
+  left: 480px;
+}
