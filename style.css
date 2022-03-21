@@ -13,24 +13,9 @@
   width: 40px;
   height: 70px;
   background-color: purple;
-  position: relative;
+  position: absolute;
   top: 130px;
-}
-.animate {
-  animation: moveit 500ms;
-  animation-fill-mode: forwards;
-}
-@keyframes moveit {
-  0% {
-    left: 0;
-  }
-  50% {
-    left: 40px;
-    top: 100px;
-  }
-  100% {
-    left: 80px;
-  }
+  left: 0px;
 }
 
 #block {
@@ -40,4 +25,11 @@
   position: relative;
   top: 130px;
   left: 480px;
+}
+
+#box {
+  position: absolute;
+  background-color: purple;
+  width: 40px;
+  height: 70px;
 }

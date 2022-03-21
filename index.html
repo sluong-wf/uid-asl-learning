@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" onclick="move()">
+<html lang="en" onkeydown="moveDown()">
     <head>
         <meta charset="UTF-8">
         <title>Game</title>
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-       <div id="game">
-           <div id="character"></div>
+        <div id="game">
            <div id="block"></div>
-       </div>
+           <div id="box" style="left: 0px; top: 50px;"></div>
+        </div>
+        <div id="show">
+            <p style="left:0px; top: 150px;">Handsign for letter <span id="letter">L</span></p>
+            <img id="image" src="src/L_letter.jpg" style="left:0px; top: 200px;">
+        </div>
     </body>
     <script src="script.js"></script>
 </html>
