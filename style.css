@@ -3,33 +3,41 @@
   margin: 0;
 }
 
+:root {  
+  --char-pos: 0px;
+}
+
 #game {
   width: 500px;
   height: 200px;
   border: 1px solid black;
 }
 
-#character {
-  width: 40px;
-  height: 70px;
-  background-color: purple;
-  position: absolute;
-  top: 130px;
-  left: 0px;
-}
-
 #block {
-  width: 20px;
-  height: 20px;
-  background-color: teal;
+  width: 40px;
   position: relative;
   top: 130px;
-  left: 480px;
+  left: 460px;
 }
 
-#box {
+#character {
   position: absolute;
-  background-color: purple;
-  width: 40px;
-  height: 70px;
+  width: 54px;
+}
+.animate {
+  animation: moveit 500ms;
+  animation-fill-mode: forwards;
+}
+@keyframes moveit {
+  0% {
+    left: var(--char-pos);
+  }
+  50% {
+    /* transform: translate(20px, -100px); */
+    left: calc(var(--char-pos) + 40px);
+    top: 100px;
+  }
+  100% {
+    left: calc(var(--char-pos) + 80px);
+  }
 }
