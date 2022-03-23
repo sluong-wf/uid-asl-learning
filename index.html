@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" onkeydown="moveDown()">
+<html lang="en" onkeydown="updateState()">
     <head>
         <meta charset="UTF-8">
-        <title>Game</title>
+        <title>ASL Learner Game</title>
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>ASL Frog Master</h1>
+        <h1>ASL Frog Master - Get To The Cherries!!</h1>
         <div id="game">
            <img src="src/cherries.png" id="block"></div>
-           <img src="src/frog2.png" id="character" style="left: 0px; top: 150px;"></div>
+           <img src="src/frog2.png" id="character"></div>
         </div>
-        <div id="show">
-            <p style="left:0px; top: 170px;">Hand sign for letter <span id="letter">L</span></p>
-            <img id="image" src="src/L_letter.jpg" style="left:0px; top: 220px;">
+        <div id="display">
+            <p>Hand sign for letter <span id="letter">L</span></p>
+            <img id="image" src="src/L_letter.jpg">
         </div>
     </body>
     <script src="script.js"></script>

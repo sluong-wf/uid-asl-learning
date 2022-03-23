@@ -22,7 +22,9 @@
 
 #character {
   position: absolute;
+  top: 150px;
   width: 54px;
+  left: var(--char-pos);
 }
 .animate {
   animation: moveit 500ms;
@@ -33,11 +35,14 @@
     left: var(--char-pos);
   }
   50% {
-    /* transform: translate(20px, -100px); */
     left: calc(var(--char-pos) + 40px);
     top: 100px;
   }
   100% {
     left: calc(var(--char-pos) + 80px);
   }
+}
+
+#image {
+  width:200px;
 }
