@@ -4,6 +4,16 @@ var keyList = [76, 67, 66, 79, 78];
 var letterList = ["L","C","B","O","N"];
 var srcList = ["src/L_letter.jpg","src/C_letter.jpg","src/B_letter.jpg","src/O_letter.jpg","src/N_letter.jpg"];
 
+function startGame() {
+    document.getElementById("startScreen").style.setProperty("display", "none");
+    document.getElementById("gameScreen").style.setProperty("display", "inline");
+}
+
+function finishGame() {
+    document.getElementById("gameScreen").style.setProperty("display", "none");
+    document.getElementById("finishScreen").style.setProperty("display", "inline");
+}
+
 function updateState() {
     var keycode = window.event.keyCode;
     if (keycode == keyList[curr]) {
@@ -24,7 +34,7 @@ function updateState() {
         var letterObj = document.getElementById("letter");
         letterObj.textContent = letterList[curr];
         if (curr > 4) {
-            var finishText = document.getElementById("display");
+            var finishText = document.getElementById("guide");
             finishText.textContent = "Yummy yummy!";
         }
         // update ASL display image

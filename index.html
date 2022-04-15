@@ -6,15 +6,29 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>ASL Frog Master - Get To The Cherries!!</h1>
-        <div id="game">
-           <img src="src/cherries.png" id="block"></div>
-           <img src="src/frog2.png" id="character"></div>
+        <h1>ASL Frog Master - Get To The Cherries!!</h1><br>
+
+        <div id="startScreen">
+            <label for="nameInp">Enter your name:</label>
+            <input type="text" id="nameInp"><br><br>
+            <button type="button" onclick="startGame()">Start</button>
         </div>
-        <div id="display">
-            <p>Hand sign for letter <span id="letter">L</span></p>
-            <img id="image" src="src/L_letter.jpg">
+
+        <div id="gameScreen" style="display:none">
+            <div id="game">
+                <img src="src/cherries.png" id="block">
+                <img src="src/frog2.png" id="character">
+            </div>
+            <div id="guide">
+                <p>Hand sign for letter <span id="letter">L</span></p>
+                <img id="image" src="src/L_letter.jpg">
+            </div>
         </div>
+
+        <div id="finishScreen" style="display:none">
+            <p>Congrats!!</p>
+        </div>
+
     </body>
     <script src="script.js"></script>
 </html>
