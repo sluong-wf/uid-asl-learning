@@ -7,16 +7,18 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-    
-        <p id="status">Awaiting TF.js load</p>
-        <h1>ASL Frog Master - Get To The Cherries!!</h1><br>
         <div id="startScreen">
-            <label for="nameInp">Enter your name:</label>
-            <input type="text" id="nameInp"><br><br>
-            <button id="startButton" type="button">Start</button>
+            <div class="bgContainer">
+                <div class="content">
+                    <h1 class="customTxt">ENTER YOUR NAME:</h1>
+                    <input type="text" id="nameInp" value="" maxlength='9' autofocus/>
+                    <button id="startButton" type="button">START</button>
+                </div>
+            </div>
         </div>
 
         <div id="gameScreen" style="display:none">
+            <h1>ASL Frog Master - Get To The Cherries!!</h1><br>
             <div class="column">
                 <div id="game">
                     <img src="src/cherries.png" id="block">
