@@ -6,7 +6,7 @@
         <title>ASL Learner Game</title>
         <link rel="stylesheet" href="style.css">
     </head>
-    <body>
+    <body style="overflow:hidden">
         <div id="startScreen">
             <div class="bgContainer">
                 <div class="contentContainer">
@@ -15,30 +15,40 @@
                     <button id="startButton" type="button">START</button>
                 </div>
             </div>
+            <div class="bgFill" style="height:5vw;"></div>
         </div>
 
-        <div id="gameScreen" style="visibility:hidden;">
-            <div class="bgContainer" id="bgTransition">
-                <h1>ASL Frog Master - Get To The Cherries!!</h1><br>
-                <button id="transitionButton" type="button">START</button>
+        <div class="bgFill" id="gameScreen" style="visibility:hidden;overflow:hidden;max-height:0;">
+            <div class="bgContainer bgTransition">
+                <button id="goButton" type="button">Click Here To Start!</button>
                 <div id="gameContainer">
                     <img src="src/frog2.png" id="character">
                     <img src="src/cherries.png" id="block">
                 </div>
             </div>
-            <div class="row">
-                <div class="column">
+            <div class="row" id="bottomDisplay" style="position:relative;">
+                <div class="column" id="instructionPanel" style="width:100%;left:0;z-index:99;">
+                    <b>Instruction:</b><br>
+                    Collect as many cherries as possible by following the guide on the left.
+                    Be quick before time runs out!
+                </div>
+                <div class="column" style="width:46%;left:0;">
                     <div id="guide">
-                        <p>Hand sign for letter <span id="letter">L</span></p>
-                        <img id="image" src="src/L_letter.jpg">
+                        <p class="displayText">Letter <span id="letter"></span></p>
+                        <img id="image" src="">
                     </div>
                 </div>
-                <div class="column">
-                    <p id="predText">prediction: </p>
-                    <video autoplay="true" id="webCamera" style="display: none"></video>
+                <div class="column" style="width:54%;left:46%;">
+                    <p class="displayText" id="nameText" style="letter-spacing:0.6vw;margin:0;">empty</p>
+                    <video autoplay="true" id="webCamera" style="display:none;"></video>
                     <canvas id="videoCanvas"></canvas>
                 </div>
             </div>
+            <div class="row" id="winContainer" style="display:none;">
+                <p class="displayText" style="font-size:6vw;">Great Job!</p>
+                <p class="displayText" id="winText" style="font-size:18vw;letter-spacing:1.5vw;"></p>
+            </div>
+            <div class="bgFill" style="height:5vw;"></div>
         </div>
 
         <div id="finishScreen" style="display:none">

@@ -1,18 +1,19 @@
-// setup for video capture
+// set up for video capture
 var video = document.querySelector("#webCamera");
 video.onplay = function() {
     setTimeout(drawBoundingBox , 300);
 };
 
-// setup for button clicks
-document.getElementById("startButton").addEventListener("click", startGame, false);
-// document.getElementById("startButton").addEventListener("click", transitionBg, false);
+// set up button clicks
+document.getElementById("startButton").addEventListener("click", showGameScreen, false);
+document.getElementById("goButton").addEventListener("click", startGame, false);
 
-// setup for game variables
+// set up game variables
 var curr = 0;
 var moveX = 0;
 var charPos = 0;
 var nameString = "";
+var gameStarted = false;
 
 // load pretrained ASL model
 var model = null;
@@ -24,7 +25,37 @@ var startTime, endTime;
 
 loadASLModel();
 
-function loadCamera(){        
+function showGameScreen() {
+    document.getElementById("startScreen").style.setProperty("display", "none");
+    document.getElementById("gameScreen").style.setProperty("visibility", "visible");
+    document.getElementById("gameScreen").style.setProperty("max-height", "none");
+
+    transitionBg();
+    setUpGame();
+    loadCamera();
+    // setTimeout(loadCamera, 1000);
+}
+
+function transitionBg() {
+    var bgContainer = document.getElementsByClassName("bgContainer")[1];
+    bgContainer.style.setProperty("background-position-y", "-50vw")
+    bgContainer.style.setProperty("background-size", "cover");
+    bgContainer.style.height = "50vw";
+    document.getElementById("goButton").style.setProperty("top", "10vw");
+}
+
+function setUpGame() {
+    nameString = document.getElementById("nameInp").value.toUpperCase();
+
+    document.getElementById("nameText").textContent = nameString;
+    document.getElementById("winText").textContent = nameString;
+
+    // single-time setup for character movement
+    moveX = 80.0/nameString.length;
+    document.documentElement.style.setProperty('--move-x', moveX+'vw');
+}
+
+async function loadCamera(){        
     if (navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({audio: false, video: {facingMode: 'user'}})
         .then( function(stream) {
@@ -50,58 +81,42 @@ function drawBoundingBox(){
     var canvas = document.querySelector("#videoCanvas");
     var ctx = canvas.getContext('2d');
 
-    // canvas.width = video.videoWidth;
-    // canvas.height = video.videoHeight;
-    
-    canvas.width = "320";
-    canvas.height = "240";
-    
+    canvas.width = window.innerWidth * 37 / 100;
+    canvas.height = window.innerWidth * 28 / 100;
+
+    var offset = window.innerWidth / 35; // ~2.5vw
+    var x = window.innerWidth * 13 / 100; // 13vw
 
     ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight,
+                  0, 0, canvas.width, canvas.height);
 
-    var frameImg = ctx.getImageData(20, 20, 128, 128)
-    predictASL(frameImg);
+    if (gameStarted) {
+        var frameImg = ctx.getImageData(offset, offset, x, x);
+        predictASL(frameImg);
+    }
 
-    ctx.rect(172, 20, 128, 128);
-    ctx.lineWidth = "6";
+    ctx.rect(canvas.width-offset-x, offset, x, x);
+    ctx.lineWidth = "4";
     ctx.strokeStyle = "red";
     ctx.stroke();
-
+    
     setTimeout(drawBoundingBox, 100);
 }
 
 function startGame() {
-    document.getElementById("startScreen").style.setProperty("display", "none");
-    document.getElementById("gameScreen").style.setProperty("visibility", "visible");
-    document.getElementById("gameScreen").style.setProperty("max-height", "none");
+    document.getElementById("goButton").style.display = "none";
+    document.getElementById("instructionPanel").style.display = "none";
 
-    transitionBg()
-    loadCamera();
-    startTimer();
-    setUpGame();
-}
-
-function transitionBg() {
-    var bgContainer = document.getElementsByClassName("bgContainer")[0];
-    // bgContainer.style.setProperty("transition-property", "height");
-    // bgContainer.style.setProperty("transition-duration", "1s");
-    bgContainer.style.setProperty("background-size", "cover");
-    bgContainer.style.height = "50vw";
-}
-
-function setUpGame() {
-    nameString = document.getElementById("nameInp").value.toUpperCase();
-
-    // single-time setup for character movement
-    moveX = 80.0/nameString.length;
-    document.documentElement.style.setProperty('--move-x', moveX+'vw');
+    gameStarted = true;
     
     var letterObj = document.getElementById("letter");
     letterObj.textContent = nameString[curr];
     var imgObj = document.getElementById("image");
     imgObj.src = "asl_alphabet_test/" + nameString[curr] + "_test.jpg";
+
+    startTimer();
 }
 
 function finishGame() {
@@ -124,18 +139,32 @@ function updateState() {
     setTimeout(function(){charObj.classList.remove("animate");},500);
 
     curr += 1;
-    // update ASL display letter
-    var letterObj = document.getElementById("letter");
-    letterObj.textContent = nameString[curr];
     if (curr == nameString.length) {
+        // reset state
+        gameStarted = false;
+        showEndState();
+        
         // end webcam video
-        stopVideo(video.srcObject);
-        var finishText = document.getElementById("guide");
-        finishText.textContent = "Yummy yummy!";
+        setTimeout(stopVideo(video.srcObject), 1000);
+
+        // var finishText = document.getElementById("guide");
+        // finishText.textContent = "Yummy yummy!";
+    } else {
+        // update ASL display letter
+        var letterObj = document.getElementById("letter");
+        letterObj.textContent = nameString[curr];
+        // update ASL display image
+        var imgObj = document.getElementById("image");
+        imgObj.src = "asl_alphabet_test/" + nameString[curr] + "_test.jpg";
     }
-    // update ASL display image
-    var imgObj = document.getElementById("image");
-    imgObj.src = "asl_alphabet/" + nameString[curr] + "_test.jpg";
+}
+
+function showEndState() {
+    console.log("here");
+    document.getElementById("bottomDisplay").style.display = "none";
+    document.getElementById("winContainer").style.display = "block";
+
+    //TODO: show Play Again or Next button
 }
 
 function getChar(x) {
@@ -148,7 +177,6 @@ function getChar(x) {
 }
 
 function predictASL(imgFrame) {
-    // let img_inp = document.getElementById("img_inp");
     let imgTensor = tf.browser.fromPixels(imgFrame);
     
     // convert image to grayscale
@@ -160,7 +188,7 @@ function predictASL(imgFrame) {
     let prediction = model.predict(imgResize).squeeze();
     let highestIndex = prediction.argMax().arraySync();
 
-    document.getElementById("predText").textContent = "prediction: " + getChar(highestIndex);
+    // document.getElementById("predText").textContent = "prediction: " + getChar(highestIndex);
 
     if (getChar(highestIndex) == nameString[curr]) {
         updateState();

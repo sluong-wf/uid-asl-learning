@@ -11,26 +11,29 @@
 
 .row {
   width: 100%;
-  height: fit-content;
-  border: 1px solid red;
+  height: 35vw;
+  max-height: 35vw;
 }
 
 .column {
   float: left;
   width: 50%;
+  height: inherit;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  position:absolute;
 }
 
 .bgContainer {
   width: 100%;
-  height: 100vw;
+  height: 85vw;
   background-image: url('src/sky_bg.png');
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
+  background-position-y: -15vw;
   margin: auto;
   position: relative;
-
-  transition-property: height;
-  transition-duration: 0s;
 }
 
 /********** START SCREEN **********/
@@ -41,14 +44,14 @@
 }
 
 h1.customTxt {
-  font: 6vw monaco, monospace; 
+  font: 6vw monospace; 
   color: white;
   margin-bottom: 10px;
 }
 
 #nameInp {
   border: 1px solid #ccc;
-  font: 6vw monaco, monospace; 
+  font: 6vw monospace; 
   letter-spacing: 10.5px;
   text-transform: uppercase;
   width: 42vw;
@@ -58,7 +61,7 @@ h1.customTxt {
 #startButton {
   background-color: rgb(13, 127, 219);
   cursor: pointer;
-  font: 6vw monaco, monospace;
+  font: 6vw monospace;
   font: bold;
   color: white;
   padding: 0 10px;
@@ -68,17 +71,42 @@ h1.customTxt {
 }
 
 .contentContainer {
-  padding: 35% 15%;
+  padding: 20% 15%;
 }
 
 /********** GAME SCREEN **********/
+.bgTransition {
+  transition: height 2s 0.2s, background-position-y 2s 0.2s;
+}
+
 #gameContainer {
   width: 100%;
   height: 200px;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   /* padding: 5% 5%; */
   position: absolute;
   bottom: 0px;
+}
+
+#goButton {
+  left: 15%;
+  top: -10vw;
+  position: absolute;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+  font: 6vw monospace;
+  color: white;
+  text-shadow: 0.5vw 0.3vw #625565;
+  text-align: left;
+  transition: top 0.5s 2.4s;
+}
+#goButton:hover {
+  color: rgb(240, 240, 240);
+  text-shadow: 0.5vw 0.3vw rgb(56, 49, 58);
 }
 
 #block {
@@ -113,13 +141,44 @@ h1.customTxt {
   }
 }
 
+.bgFill {
+  background-color: #625565;
+}
+
 #image {
-  width: 200px;
+  background-color: gray;
+  width: 28vw;
+  height: 28vW;
+  outline-offset: -1vw;
+  outline: 1.5vw solid #966c6c;
+}
+
+#instructionPanel {
+  background-color: #574c5a;
+  padding: 5vw;
+  color: white;
+  font: 4vw monospace;
+}
+
+.displayText {
+  font: 3.5vw monospace;
+  color: #d0b9b9;
+  text-align: center;
+  margin-bottom: 0.5vw;
+  font-weight: bold;
 }
 
 #webCamera {
-  width: 320px;
-  height: 240px;
+  width: 640px;
+  height: 480px;
+}
+
+#videoCanvas {
+  width: 37vw;
+  height: 28vw;
+  outline-offset: -1vw;
+  outline: 1.5vw solid #966c6c;
+  /* background-color: rgb(22, 22, 22); */
 }
 
 #myProgress {
@@ -131,10 +190,4 @@ h1.customTxt {
   width: 1%;
   height: 30px;
   background-color: green;
-}
-
-.testBottom {
-  height: 30px;
-  border: 1px solid red;
-  width:100%;
 }
