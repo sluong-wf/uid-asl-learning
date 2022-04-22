@@ -9,7 +9,7 @@
     <body>
         <div id="startScreen">
             <div class="bgContainer">
-                <div class="content">
+                <div class="contentContainer">
                     <h1 class="customTxt">ENTER YOUR NAME:</h1>
                     <input type="text" id="nameInp" value="" maxlength='9' autofocus/>
                     <button id="startButton" type="button">START</button>
@@ -17,22 +17,27 @@
             </div>
         </div>
 
-        <div id="gameScreen" style="display:none">
-            <h1>ASL Frog Master - Get To The Cherries!!</h1><br>
-            <div class="column">
-                <div id="game">
-                    <img src="src/cherries.png" id="block">
+        <div id="gameScreen" style="visibility:hidden;">
+            <div class="bgContainer" id="bgTransition">
+                <h1>ASL Frog Master - Get To The Cherries!!</h1><br>
+                <button id="transitionButton" type="button">START</button>
+                <div id="gameContainer">
                     <img src="src/frog2.png" id="character">
-                </div>
-                <div id="guide">
-                    <p>Hand sign for letter <span id="letter">L</span></p>
-                    <img id="image" src="src/L_letter.jpg">
+                    <img src="src/cherries.png" id="block">
                 </div>
             </div>
-            <div class="column">
-                <p id="predText">prediction: </p>
-                <video autoplay="true" id="webCamera" style="display: none"></video>
-                <canvas id="videoCanvas"></canvas>
+            <div class="row">
+                <div class="column">
+                    <div id="guide">
+                        <p>Hand sign for letter <span id="letter">L</span></p>
+                        <img id="image" src="src/L_letter.jpg">
+                    </div>
+                </div>
+                <div class="column">
+                    <p id="predText">prediction: </p>
+                    <video autoplay="true" id="webCamera" style="display: none"></video>
+                    <canvas id="videoCanvas"></canvas>
+                </div>
             </div>
         </div>
 

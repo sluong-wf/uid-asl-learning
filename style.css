@@ -5,7 +5,14 @@
 }
 
 :root {  
-  --char-pos: 0px;
+  --char-pos: 0vw;
+  --move-x: 0vw;
+}
+
+.row {
+  width: 100%;
+  height: fit-content;
+  border: 1px solid red;
 }
 
 .column {
@@ -13,49 +20,24 @@
   width: 50%;
 }
 
-#game {
-  width: 500px;
-  height: 200px;
-  border: 1px solid black;
-}
-
-#block {
-  width: 40px;
+.bgContainer {
+  width: 100%;
+  height: 100vw;
+  background-image: url('src/sky_bg.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin: auto;
   position: relative;
-  top: 130px;
-  left: 460px;
+
+  transition-property: height;
+  transition-duration: 0s;
 }
 
-#character {
-  position: absolute;
-  top: 150px;
-  width: 54px;
-  left: var(--char-pos);
-}
-.animate {
-  animation: moveit 500ms;
-  animation-fill-mode: forwards;
-}
-@keyframes moveit {
-  0% {
-    left: var(--char-pos);
-  }
-  50% {
-    left: calc(var(--char-pos) + 40px);
-    top: 100px;
-  }
-  100% {
-    left: calc(var(--char-pos) + 80px);
-  }
-}
-
-#image {
-  width: 200px;
-}
-
-#webCamera {
-  width: 320px;
-  height: 240px;
+/********** START SCREEN **********/
+#startScreen {
+  background-color: #73b2ee;
+  align-items: center;
+  justify-content: center;
 }
 
 h1.customTxt {
@@ -70,6 +52,7 @@ h1.customTxt {
   letter-spacing: 10.5px;
   text-transform: uppercase;
   width: 42vw;
+  padding-left: 4px;
 }
 
 #startButton {
@@ -84,22 +67,74 @@ h1.customTxt {
   background-color: rgb(29, 137, 226);
 }
 
-.content {
+.contentContainer {
   padding: 35% 15%;
 }
 
-#startScreen {
-  background-color: #73b2ee;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/********** GAME SCREEN **********/
+#gameContainer {
+  width: 100%;
+  height: 200px;
+  border: 1px solid black;
+  /* padding: 5% 5%; */
+  position: absolute;
+  bottom: 0px;
 }
 
-.bgContainer {
+#block {
+  position: absolute;
+  width: 4vw;
+  bottom: 8vw;
+  right: 5vw;
+}
+
+#character {
+  position: absolute;
+  bottom: 6vw;
+  width: 12vw;
+  left: var(--char-pos);
+}
+.animate {
+  animation: moveit 500ms;
+  animation-fill-mode: forwards;
+}
+@keyframes moveit {
+  0% {
+    left: var(--char-pos);
+    bottom: 6vw;
+  }
+  50% {
+    left: calc(var(--char-pos) + var(--move-x)/2.0);
+    bottom: 14vw;
+  }
+  100% {
+    left: calc(var(--char-pos) + var(--move-x));
+    bottom: 6vw;
+  }
+}
+
+#image {
+  width: 200px;
+}
+
+#webCamera {
+  width: 320px;
+  height: 240px;
+}
+
+#myProgress {
   width: 100%;
-  height: 100vw;
-  background-image: url('src/sky_bg.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  margin: auto;
+  background-color: grey;
+}
+
+#myBar {
+  width: 1%;
+  height: 30px;
+  background-color: green;
+}
+
+.testBottom {
+  height: 30px;
+  border: 1px solid red;
+  width:100%;
 }

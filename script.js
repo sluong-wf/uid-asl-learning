@@ -6,17 +6,21 @@ video.onplay = function() {
 
 // setup for button clicks
 document.getElementById("startButton").addEventListener("click", startGame, false);
+// document.getElementById("startButton").addEventListener("click", transitionBg, false);
 
 // setup for game variables
 var curr = 0;
+var moveX = 0;
 var charPos = 0;
-var letterList = ["L","C","B","O","N"];
+var nameString = "";
 
 // load pretrained ASL model
 var model = null;
 async function loadASLModel() {
     model = await tf.loadLayersModel('models/model.json');
 }
+
+var startTime, endTime;
 
 loadASLModel();
 
@@ -70,9 +74,34 @@ function drawBoundingBox(){
 
 function startGame() {
     document.getElementById("startScreen").style.setProperty("display", "none");
-    document.getElementById("gameScreen").style.setProperty("display", "inline");
+    document.getElementById("gameScreen").style.setProperty("visibility", "visible");
+    document.getElementById("gameScreen").style.setProperty("max-height", "none");
 
+    transitionBg()
     loadCamera();
+    startTimer();
+    setUpGame();
+}
+
+function transitionBg() {
+    var bgContainer = document.getElementsByClassName("bgContainer")[0];
+    // bgContainer.style.setProperty("transition-property", "height");
+    // bgContainer.style.setProperty("transition-duration", "1s");
+    bgContainer.style.setProperty("background-size", "cover");
+    bgContainer.style.height = "50vw";
+}
+
+function setUpGame() {
+    nameString = document.getElementById("nameInp").value.toUpperCase();
+
+    // single-time setup for character movement
+    moveX = 80.0/nameString.length;
+    document.documentElement.style.setProperty('--move-x', moveX+'vw');
+    
+    var letterObj = document.getElementById("letter");
+    letterObj.textContent = nameString[curr];
+    var imgObj = document.getElementById("image");
+    imgObj.src = "asl_alphabet_test/" + nameString[curr] + "_test.jpg";
 }
 
 function finishGame() {
@@ -86,18 +115,19 @@ function updateState() {
     if(charObj.classList != "animate"){
         charObj.classList.add("animate");}
     // update character's animation position
-    document.documentElement.style.setProperty('--char-pos', charPos+'px');
+    document.documentElement.style.setProperty('--char-pos', charPos+'vw');
+    
     // update character's fixed location
-    charPos += 80;
-    charObj.style.left = charPos+'px'; 
+    charPos += moveX;
+    charObj.style.left = charPos+'vw'; 
     // remove animation
     setTimeout(function(){charObj.classList.remove("animate");},500);
 
     curr += 1;
     // update ASL display letter
     var letterObj = document.getElementById("letter");
-    letterObj.textContent = letterList[curr];
-    if (curr > 4) {
+    letterObj.textContent = nameString[curr];
+    if (curr == nameString.length) {
         // end webcam video
         stopVideo(video.srcObject);
         var finishText = document.getElementById("guide");
@@ -105,7 +135,7 @@ function updateState() {
     }
     // update ASL display image
     var imgObj = document.getElementById("image");
-    imgObj.src = "src/" + letterList[curr] + "_letter.jpg";
+    imgObj.src = "asl_alphabet/" + nameString[curr] + "_test.jpg";
 }
 
 function getChar(x) {
@@ -132,7 +162,41 @@ function predictASL(imgFrame) {
 
     document.getElementById("predText").textContent = "prediction: " + getChar(highestIndex);
 
-    if (getChar(highestIndex) == letterList[curr]) {
+    if (getChar(highestIndex) == nameString[curr]) {
         updateState();
+        endTimer();
     }
+}
+
+function startTimer() {
+    startTime = new Date();
+}
+
+function endTimer() {
+    endTime = new Date();
+    var timeDiff = endTime - startTime;
+    timeDiff /= 1000;
+
+    var seconds = Math.round(timeDiff);
+    console.log(seconds + " seconds");
+}
+
+var i = 0;
+async function move() {
+    document.getElementById("testmove").textContent = "move called";
+  if (i == 0) {
+    i = 1;
+    var elem = document.getElementById("myBar");
+    var width = 1;
+    var id = setInterval(frame, 10);
+    function frame() {
+      if (width >= 100) {
+        clearInterval(id);
+        i = 0;
+      } else {
+        width++;
+        elem.style.width = width + "%";
+      }
+    }
+  }
 }
