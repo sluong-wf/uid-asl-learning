@@ -1,3 +1,5 @@
+const RAND_WORDLIST = "rack,wage,bind,border,damn,drunk,luke,seeker,frame,reload,turned,firms,flu,opt,hit,adult,ozone,stayed,toe,pee,date,lynn,buck,asp,number,wicked,sites,verbal,alloy,brief,offer,tapes,atm,roads,cox,gpl,puerto,bee,farmer,tide,indoor,ship,shoot,indie,expert,vendor,she,month,mazda,shown,seems,thong,first,wed,bunch,shark,wendy,would,warner,vision,buf,extras,eric,kruger,happy,pets,sao,calls,this,guinea,beast,damage,guide,mars,speech,actor,vessel,ltd,hearts,views,breed,fewer,hawk,dutch,styles,zum,gamma,stress,tires,app,girls,pct,shape,bubble,belly,rss,band,knife,reform,trash,campus,bikini,appeal,device,ruth,adrian,unique,fall,nick,moment,jake,usd,wrote,glance,ignore,hard,choose,mens,wrong,elite,apollo,dating,inf,locks,mining,multi,ripe,slave,place,shots,topics,week,acre,judy,nasa,shield,drop,fisher,cached,powell,asn,strip,remote,island,fly,node,marble,brake,moss,pushed,been,cet,heavy,itunes,price,nearby,extra,cards,lambda,laptop,cnet,rip,caring,sarah,arabia,speaks,dir,enjoy,makes,katie,answer,cheats,duo,fed,lisa,cups,miss,spirit,fake,nav,golf,system,weekly,bar,bass,harder,tale,bags,nepal,settle,mime,ebay,rounds,skip,client,target,bullet,coin,barnes,nine".toUpperCase().split(",");
+
 // set up for video capture
 var video = document.querySelector("#webCamera");
 video.onplay = function() {
@@ -5,15 +7,19 @@ video.onplay = function() {
 };
 
 // set up button clicks
+document.getElementById("randomButton").addEventListener("click", function() { pickRandom = true; showGameScreen(); }, false);
 document.getElementById("startButton").addEventListener("click", showGameScreen, false);
 document.getElementById("goButton").addEventListener("click", startGame, false);
 
 // set up game variables
+var pickRandom = false; // whether user inputted a word or generating random
 var curr = 0;
 var moveX = 0;
 var charPos = 0;
 var nameString = "";
 var gameStarted = false;
+var timerReset = false;
+var timerId;
 
 // load pretrained ASL model
 var model = null;
@@ -28,12 +34,16 @@ loadASLModel();
 function showGameScreen() {
     document.getElementById("startScreen").style.setProperty("display", "none");
     document.getElementById("gameScreen").style.setProperty("visibility", "visible");
-    document.getElementById("gameScreen").style.setProperty("max-height", "none");
+    document.getElementById("gameScreen").style.setProperty("max-height", "85vw");
 
     transitionBg();
     setUpGame();
     loadCamera();
-    // setTimeout(loadCamera, 1000);
+}
+
+function startRandom() {
+    pickRandom = true;
+    showGameScreen();
 }
 
 function transitionBg() {
@@ -45,7 +55,8 @@ function transitionBg() {
 }
 
 function setUpGame() {
-    nameString = document.getElementById("nameInp").value.toUpperCase();
+    if (pickRandom) nameString = RAND_WORDLIST[Math.trunc(Math.random()*100)];
+    else nameString = document.getElementById("nameInp").value.toUpperCase();
 
     document.getElementById("nameText").textContent = nameString;
     document.getElementById("winText").textContent = nameString;
@@ -116,7 +127,10 @@ function startGame() {
     var imgObj = document.getElementById("image");
     imgObj.src = "asl_alphabet_test/" + nameString[curr] + "_test.jpg";
 
+    document.getElementById("timerProgress").style.display = "block";
+
     startTimer();
+    startTimerBar();
 }
 
 function finishGame() {
@@ -124,19 +138,21 @@ function finishGame() {
     document.getElementById("finishScreen").style.setProperty("display", "inline");
 }
 
-function updateState() {
-    var charObj = document.getElementById("character");
-    // add animation
-    if(charObj.classList != "animate"){
-        charObj.classList.add("animate");}
-    // update character's animation position
-    document.documentElement.style.setProperty('--char-pos', charPos+'vw');
-    
-    // update character's fixed location
-    charPos += moveX;
-    charObj.style.left = charPos+'vw'; 
-    // remove animation
-    setTimeout(function(){charObj.classList.remove("animate");},500);
+function updateState(timeRanOut=false) {
+    if (!timeRanOut) { // if state is updated because time ran out, character does not move
+        var charObj = document.getElementById("character");
+        // add animation
+        if(charObj.classList != "animate"){
+            charObj.classList.add("animate");}
+        // update character's animation position
+        document.documentElement.style.setProperty('--char-pos', charPos+'vw');
+        
+        // update character's fixed location
+        charPos += moveX;
+        charObj.style.left = charPos+'vw'; 
+        // remove animation
+        setTimeout(function(){charObj.classList.remove("animate");},500);
+    }
 
     curr += 1;
     if (curr == nameString.length) {
@@ -156,11 +172,13 @@ function updateState() {
         // update ASL display image
         var imgObj = document.getElementById("image");
         imgObj.src = "asl_alphabet_test/" + nameString[curr] + "_test.jpg";
+
+        // restart timer bar
+        restartTimerBar();
     }
 }
 
 function showEndState() {
-    console.log("here");
     document.getElementById("bottomDisplay").style.display = "none";
     document.getElementById("winContainer").style.display = "block";
 
@@ -191,7 +209,8 @@ function predictASL(imgFrame) {
     // document.getElementById("predText").textContent = "prediction: " + getChar(highestIndex);
 
     if (getChar(highestIndex) == nameString[curr]) {
-        updateState();
+        timerReset = true;
+        // updateState();
         endTimer();
     }
 }
@@ -209,21 +228,27 @@ function endTimer() {
     console.log(seconds + " seconds");
 }
 
-var i = 0;
-async function move() {
-    document.getElementById("testmove").textContent = "move called";
-  if (i == 0) {
-    i = 1;
-    var elem = document.getElementById("myBar");
-    var width = 1;
-    var id = setInterval(frame, 10);
+function restartTimerBar() {
+    timerReset = true;
+    startTimerBar();
+}
+
+var iTimer = 0;
+function startTimerBar() {
+  if (iTimer == 0) {
+    iTimer = 1; // safeguard that only one setInterval is running at once
+    timerReset = false;
+    var width = 1000;
+    var elem = document.getElementById("timerBar");
+    timerId = setInterval(frame, 50);
     function frame() {
-      if (width >= 100) {
-        clearInterval(id);
-        i = 0;
+      if (width <= 5 || timerReset) {
+        clearInterval(timerId);
+        iTimer = 0;
+        updateState(!timerReset);
       } else {
-        width++;
-        elem.style.width = width + "%";
+        width -= 5;
+        elem.style.width = width/10 + "%";
       }
     }
   }

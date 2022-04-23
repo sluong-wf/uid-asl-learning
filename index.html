@@ -12,7 +12,8 @@
                 <div class="contentContainer">
                     <h1 class="customTxt">ENTER YOUR NAME:</h1>
                     <input type="text" id="nameInp" value="" maxlength='9' autofocus/>
-                    <button id="startButton" type="button">START</button>
+                    <button class="buttonStyle" id="startButton" type="button">START</button><br><br><br>
+                    <button class="buttonStyle" id="randomButton" type="button">RANDOM WORD</button>
                 </div>
             </div>
             <div class="bgFill" style="height:5vw;"></div>
@@ -20,6 +21,7 @@
 
         <div class="bgFill" id="gameScreen" style="visibility:hidden;overflow:hidden;max-height:0;">
             <div class="bgContainer bgTransition">
+                <div id="timerProgress" style="display:none;"><div id="timerBar"></div></div>
                 <button id="goButton" type="button">Click Here To Start!</button>
                 <div id="gameContainer">
                     <img src="src/frog2.png" id="character">
