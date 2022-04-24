@@ -87,6 +87,7 @@ h1.customTxt {
   box-shadow: 0.6vw 0.8vw darkslategrey;
   position: absolute;
   left: 30vw;
+  top: 50vw;
 }
 #randomButton:hover {
   background-color: rgb(48, 159, 122);
@@ -219,4 +220,10 @@ h1.customTxt {
   height: 4vw;
   background-color: rgb(225 194 159); /* rgb(176 152 144); */
   border-radius: 1vw;
+}
+
+#buttonsContainer {
+  position: absolute;
+  top: 10vw;
+  left: 5vw;
 }

@@ -12,17 +12,21 @@
                 <div class="contentContainer">
                     <h1 class="customTxt">ENTER YOUR NAME:</h1>
                     <input type="text" id="nameInp" value="" maxlength='9' autofocus/>
-                    <button class="buttonStyle" id="startButton" type="button">START</button><br><br><br>
-                    <button class="buttonStyle" id="randomButton" type="button">RANDOM WORD</button>
+                    <button class="buttonStyle" id="startButton" type="button">START</button>
                 </div>
+                <button class="buttonStyle" id="randomButton" type="button">RANDOM WORD</button>
             </div>
             <div class="bgFill" style="height:5vw;"></div>
         </div>
-
+        
         <div class="bgFill" id="gameScreen" style="visibility:hidden;overflow:hidden;max-height:0;">
             <div class="bgContainer bgTransition">
                 <div id="timerProgress" style="display:none;"><div id="timerBar"></div></div>
                 <button id="goButton" type="button">Click Here To Start!</button>
+                <div id="buttonsContainer">
+                    <button class="buttonStyle" id="restartButton" type="button" style="display:none">PLAY AGAIN</button>
+                    <button class="buttonStyle" id="resultsButton" type="button" style="display:none">VIEW RESULTS</button>
+                </div>
                 <div id="gameContainer">
                     <img src="src/frog2.png" id="character">
                     <img src="src/cherries.png" id="block">
@@ -46,11 +50,11 @@
                     <canvas id="videoCanvas"></canvas>
                 </div>
             </div>
+            <div class="bgFill" style="height:5vw;"></div>
             <div class="row" id="winContainer" style="display:none;">
                 <p class="displayText" style="font-size:6vw;">Great Job!</p>
                 <p class="displayText" id="winText" style="font-size:18vw;letter-spacing:1.5vw;"></p>
             </div>
-            <div class="bgFill" style="height:5vw;"></div>
         </div>
 
         <div id="finishScreen" style="display:none">

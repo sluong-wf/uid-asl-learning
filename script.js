@@ -1,4 +1,4 @@
-const RAND_WORDLIST = "rack,wage,bind,border,damn,drunk,luke,seeker,frame,reload,turned,firms,flu,opt,hit,adult,ozone,stayed,toe,pee,date,lynn,buck,asp,number,wicked,sites,verbal,alloy,brief,offer,tapes,atm,roads,cox,gpl,puerto,bee,farmer,tide,indoor,ship,shoot,indie,expert,vendor,she,month,mazda,shown,seems,thong,first,wed,bunch,shark,wendy,would,warner,vision,buf,extras,eric,kruger,happy,pets,sao,calls,this,guinea,beast,damage,guide,mars,speech,actor,vessel,ltd,hearts,views,breed,fewer,hawk,dutch,styles,zum,gamma,stress,tires,app,girls,pct,shape,bubble,belly,rss,band,knife,reform,trash,campus,bikini,appeal,device,ruth,adrian,unique,fall,nick,moment,jake,usd,wrote,glance,ignore,hard,choose,mens,wrong,elite,apollo,dating,inf,locks,mining,multi,ripe,slave,place,shots,topics,week,acre,judy,nasa,shield,drop,fisher,cached,powell,asn,strip,remote,island,fly,node,marble,brake,moss,pushed,been,cet,heavy,itunes,price,nearby,extra,cards,lambda,laptop,cnet,rip,caring,sarah,arabia,speaks,dir,enjoy,makes,katie,answer,cheats,duo,fed,lisa,cups,miss,spirit,fake,nav,golf,system,weekly,bar,bass,harder,tale,bags,nepal,settle,mime,ebay,rounds,skip,client,target,bullet,coin,barnes,nine".toUpperCase().split(",");
+const RAND_WORDLIST = "rack,wage,bind,border,ball,drunk,luke,seeker,frame,reload,turned,firms,flu,opt,hit,adult,ozone,stayed,toe,peel,date,read,buck,dollar,number,wicked,sites,verbal,alloy,brief,offer,tapes,atm,roads,fridge,farm,doctor,bee,farmer,tide,indoor,ship,shoot,indie,expert,vendor,she,month,today,shown,seems,think,first,wed,bunch,shark,windy,would,warner,vision,burn,extra,eric,flag,happy,pets,rain,calls,this,guinea,beast,damage,guide,mars,speech,actor,vessel,ltd,hearts,views,breed,fewer,hawk,dutch,styles,zum,gamma,stress,tires,app,girls,pct,shape,bubble,belly,rss,band,knife,reform,trash,campus,bikini,appeal,device,ruth,adrian,unique,fall,nick,moment,jake,usd,wrote,glance,ignore,hard,choose,mens,wrong,elite,apollo,dating,inf,locks,mining,multi,ripe,slave,place,shots,topics,week,acre,judy,nasa,shield,drop,fisher,cached,powell,asn,strip,remote,island,fly,node,marble,brake,moss,pushed,been,cet,heavy,itunes,price,nearby,extra,cards,lambda,laptop,cnet,rip,caring,sarah,arabia,speaks,dir,enjoy,makes,katie,answer,cheats,duo,fed,lisa,cups,miss,spirit,fake,nav,golf,system,weekly,bar,bass,harder,tale,bags,nepal,settle,mime,ebay,rounds,skip,client,target,bullet,coin,barnes,nine".toUpperCase().split(",");
 
 // set up for video capture
 var video = document.querySelector("#webCamera");
@@ -10,6 +10,8 @@ video.onplay = function() {
 document.getElementById("randomButton").addEventListener("click", function() { pickRandom = true; showGameScreen(); }, false);
 document.getElementById("startButton").addEventListener("click", showGameScreen, false);
 document.getElementById("goButton").addEventListener("click", startGame, false);
+document.getElementById("restartButton").addEventListener("click", function() { transitionBgEnd(); setTimeout(restartGameViews, 2200);}, false);
+document.getElementById("resultsButton").addEventListener("click", showResultScreen, false);
 
 // set up game variables
 var pickRandom = false; // whether user inputted a word or generating random
@@ -20,6 +22,19 @@ var nameString = "";
 var gameStarted = false;
 var timerReset = false;
 var timerId;
+
+function resetGameVars() {
+    pickRandom = false; // whether user inputted a word or generating random
+    curr = 0;
+    moveX = 0;
+    charPos = 0;
+    nameString = "";
+    gameStarted = false;
+    timerReset = false;
+    timerId;
+    iTimer = 0;
+    document.getElementById("character").style.left = 0;
+}
 
 // load pretrained ASL model
 var model = null;
@@ -36,7 +51,7 @@ function showGameScreen() {
     document.getElementById("gameScreen").style.setProperty("visibility", "visible");
     document.getElementById("gameScreen").style.setProperty("max-height", "85vw");
 
-    transitionBg();
+    transitionBgStart();
     setUpGame();
     loadCamera();
 }
@@ -46,12 +61,20 @@ function startRandom() {
     showGameScreen();
 }
 
-function transitionBg() {
+function transitionBgStart() {
     var bgContainer = document.getElementsByClassName("bgContainer")[1];
     bgContainer.style.setProperty("background-position-y", "-50vw")
     bgContainer.style.setProperty("background-size", "cover");
     bgContainer.style.height = "50vw";
     document.getElementById("goButton").style.setProperty("top", "10vw");
+}
+
+function transitionBgEnd() {
+    var bgContainer = document.getElementsByClassName("bgContainer")[1];
+    bgContainer.style.setProperty("background-position-y", "-15vw")
+    bgContainer.style.setProperty("background-size", "cover");
+    bgContainer.style.height = "85vw";
+    document.getElementById("goButton").style.setProperty("top", "-10vw");
 }
 
 function setUpGame() {
@@ -128,11 +151,13 @@ function startGame() {
     imgObj.src = "asl_alphabet_test/" + nameString[curr] + "_test.jpg";
 
     document.getElementById("timerProgress").style.display = "block";
+    document.getElementById("timerBar").style.setProperty("width", "100%");
 
     startTimer();
     startTimerBar();
 }
 
+// CURRENTLY NOT USED
 function finishGame() {
     document.getElementById("gameScreen").style.setProperty("display", "none");
     document.getElementById("finishScreen").style.setProperty("display", "inline");
@@ -181,8 +206,29 @@ function updateState(timeRanOut=false) {
 function showEndState() {
     document.getElementById("bottomDisplay").style.display = "none";
     document.getElementById("winContainer").style.display = "block";
+    document.getElementById("timerProgress").style.display = "none";
+    document.getElementById("restartButton").style.display = "block";
+    document.getElementById("resultsButton").style.display = "block";
+}
 
-    //TODO: show Play Again or Next button
+function restartGameViews() {
+    transitionBgEnd();
+    resetGameVars();
+    document.getElementById("startScreen").style.setProperty("display", "block");
+    document.getElementById("gameScreen").style.setProperty("visibility", "hidden");
+    document.getElementById("gameScreen").style.setProperty("max-height", "0");
+    // reverse all end state element displays
+    document.getElementById("bottomDisplay").style.display = "block";
+    document.getElementById("winContainer").style.display = "none";
+    document.getElementById("restartButton").style.display = "none";
+    document.getElementById("resultsButton").style.display = "none";
+    
+    document.getElementById("goButton").style.display = "block";
+    document.getElementById("instructionPanel").style.display = "block";
+}
+
+function showResultScreen() {
+    pass;
 }
 
 function getChar(x) {
