@@ -222,8 +222,31 @@ h1.customTxt {
   border-radius: 1vw;
 }
 
+#restartButton {
+  background-color: #3ac192;
+  box-shadow: 0.6vw 0.8vw #046c4e;
+  text-shadow: -0.3vw -0.4vw #046c4e;
+}
+#restartButton:hover {
+  background-color: #30b184;
+  box-shadow: 0.6vw 0.8vw #045e44;
+}
+
+#resultsButton {
+  background-color: #e3a849;
+  box-shadow: 0.6vw 0.8vw #9c660a;
+  text-shadow: -0.3vw -0.4vw #9c660a;
+}
+#resultsButton:hover {
+  background-color: #cf963c;
+  box-shadow: 0.6vw 0.8vw #915e08;
+}
+
 #buttonsContainer {
+  width: 100%;
   position: absolute;
   top: 10vw;
-  left: 5vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }

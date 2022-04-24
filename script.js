@@ -10,11 +10,11 @@ video.onplay = function() {
 document.getElementById("randomButton").addEventListener("click", function() { pickRandom = true; showGameScreen(); }, false);
 document.getElementById("startButton").addEventListener("click", showGameScreen, false);
 document.getElementById("goButton").addEventListener("click", startGame, false);
-document.getElementById("restartButton").addEventListener("click", function() { transitionBgEnd(); setTimeout(restartGameViews, 2200);}, false);
+document.getElementById("restartButton").addEventListener("click", restartClicked, false);
 document.getElementById("resultsButton").addEventListener("click", showResultScreen, false);
 
 // set up game variables
-var pickRandom = false; // whether user inputted a word or generating random
+var pickRandom = false; // whether user input a word or generating random
 var curr = 0;
 var moveX = 0;
 var charPos = 0;
@@ -49,7 +49,7 @@ loadASLModel();
 function showGameScreen() {
     document.getElementById("startScreen").style.setProperty("display", "none");
     document.getElementById("gameScreen").style.setProperty("visibility", "visible");
-    document.getElementById("gameScreen").style.setProperty("max-height", "85vw");
+    document.getElementById("gameScreen").style.setProperty("max-height", "90vw");
 
     transitionBgStart();
     setUpGame();
@@ -211,6 +211,13 @@ function showEndState() {
     document.getElementById("resultsButton").style.display = "block";
 }
 
+function restartClicked() {
+    document.getElementById("restartButton").style.display = "none";
+    document.getElementById("resultsButton").style.display = "none";
+    transitionBgEnd(); 
+    setTimeout(restartGameViews, 2200);
+}
+
 function restartGameViews() {
     transitionBgEnd();
     resetGameVars();
@@ -220,8 +227,6 @@ function restartGameViews() {
     // reverse all end state element displays
     document.getElementById("bottomDisplay").style.display = "block";
     document.getElementById("winContainer").style.display = "none";
-    document.getElementById("restartButton").style.display = "none";
-    document.getElementById("resultsButton").style.display = "none";
     
     document.getElementById("goButton").style.display = "block";
     document.getElementById("instructionPanel").style.display = "block";
