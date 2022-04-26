@@ -21,7 +21,9 @@ var charPos = 0;
 var nameString = "";
 var gameStarted = false;
 var timerReset = false;
-var timerId;
+var data = {}; // example: {"L": {missCount: 2, totalCount: 4, totalTime: 8.5}}
+var rawData = []; // example: [["L", 3.28, TRUE], ...] // letter timestamp missed
+var currTrial = 0;
 
 function resetGameVars() {
     pickRandom = false; // whether user inputted a word or generating random
@@ -31,7 +33,6 @@ function resetGameVars() {
     nameString = "";
     gameStarted = false;
     timerReset = false;
-    timerId;
     iTimer = 0;
     document.getElementById("character").style.left = 0;
 }
@@ -51,9 +52,9 @@ function showGameScreen() {
     document.getElementById("gameScreen").style.setProperty("visibility", "visible");
     document.getElementById("gameScreen").style.setProperty("max-height", "90vw");
 
+    loadCamera();
     transitionBgStart();
     setUpGame();
-    loadCamera();
 }
 
 function startRandom() {
@@ -78,11 +79,17 @@ function transitionBgEnd() {
 }
 
 function setUpGame() {
+    currTrial += 1;
     if (pickRandom) nameString = RAND_WORDLIST[Math.trunc(Math.random()*100)];
     else nameString = document.getElementById("nameInp").value.toUpperCase();
 
     document.getElementById("nameText").textContent = nameString;
     document.getElementById("winText").textContent = nameString;
+
+    // set up data dictionary for each unique letter
+    Array.from(nameString).forEach(element => {
+        if (!(element in data)) data[element] = {missCount:0, totalCount:0, totalTime:0.0};
+    });
 
     // single-time setup for character movement
     moveX = 80.0/nameString.length;
@@ -164,7 +171,14 @@ function finishGame() {
 }
 
 function updateState(timeRanOut=false) {
-    if (!timeRanOut) { // if state is updated because time ran out, character does not move
+    var timeDiff = getTimeDiff();
+    var currData = data[nameString[curr]];
+    currData.totalCount += 1;
+
+    if (!timeRanOut) { // character only moves if time did not run out
+        currData.totalTime += timeDiff;
+        rawData.push([currTrial,nameString[curr],timeDiff,"FALSE"]);
+
         var charObj = document.getElementById("character");
         // add animation
         if(charObj.classList != "animate"){
@@ -177,6 +191,10 @@ function updateState(timeRanOut=false) {
         charObj.style.left = charPos+'vw'; 
         // remove animation
         setTimeout(function(){charObj.classList.remove("animate");},500);
+    } else { // missed letter because time ran out
+        currData.missCount += 1;
+        currData.totalTime += 10.0;
+        rawData.push([currTrial,nameString[curr],"10.00","TRUE"]);
     }
 
     curr += 1;
@@ -219,7 +237,6 @@ function restartClicked() {
 }
 
 function restartGameViews() {
-    transitionBgEnd();
     resetGameVars();
     document.getElementById("startScreen").style.setProperty("display", "block");
     document.getElementById("gameScreen").style.setProperty("visibility", "hidden");
@@ -232,8 +249,38 @@ function restartGameViews() {
     document.getElementById("instructionPanel").style.display = "block";
 }
 
+function viewResultsClicked() {
+    transitionBgEnd();
+    setTimeout(showResultScreen, 2200);
+}
+
 function showResultScreen() {
-    pass;
+    document.getElementById("gameScreen").style.setProperty("display", "none");
+    document.getElementById("resultsScreen").style.display = "block";
+
+    displayGameResults();
+}
+
+function displayGameResults() {
+    var keys = Object.keys(data);
+    keys.sort((a, b) => data[b].missCount - data[a].missCount)
+
+    var htmlString = "<p>SUMMARY:<br>";
+    keys.forEach(element => {
+        htmlString += "Letter " + element + " - You missed " + data[element].missCount + " times - Average time taken: " + 
+                      Math.round(data[element].totalTime/data[element].totalCount*100)/100 + "s. <br>";
+    });
+    htmlString += "</p><br>";
+
+    // RAW DATA
+    htmlString += "<p>TRIAL&emsp;LETTER&emsp;TIME&emsp;MISSED<br>";
+    rawData.forEach(element => {
+        htmlString += element.join(",") + "<br>";
+    });
+    htmlString += "</p>";
+
+    document.getElementById("resultsScreen").innerHTML = htmlString;
+
 }
 
 function getChar(x) {
@@ -262,7 +309,6 @@ function predictASL(imgFrame) {
     if (getChar(highestIndex) == nameString[curr]) {
         timerReset = true;
         // updateState();
-        endTimer();
     }
 }
 
@@ -270,13 +316,16 @@ function startTimer() {
     startTime = new Date();
 }
 
-function endTimer() {
+function getTimeDiff() {
     endTime = new Date();
     var timeDiff = endTime - startTime;
-    timeDiff /= 1000;
+    startTime = endTime;
 
-    var seconds = Math.round(timeDiff);
-    console.log(seconds + " seconds");
+    // get time in seconds to 2 decimal places
+    timeDiff = Math.round(timeDiff/10)/100;
+    
+    console.log(timeDiff + " seconds");
+    return timeDiff
 }
 
 function restartTimerBar() {
@@ -291,14 +340,14 @@ function startTimerBar() {
     timerReset = false;
     var width = 1000;
     var elem = document.getElementById("timerBar");
-    timerId = setInterval(frame, 50);
+    var timerId = setInterval(frame, 10);
     function frame() {
       if (width <= 5 || timerReset) {
         clearInterval(timerId);
         iTimer = 0;
         updateState(!timerReset);
       } else {
-        width -= 5;
+        width -= 1;
         elem.style.width = width/10 + "%";
       }
     }
