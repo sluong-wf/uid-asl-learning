@@ -22,6 +22,7 @@ var charPos = 0;
 var nameString = "";
 var gameStarted = false;
 var timerReset = false;
+var startTime;
 var data = {}; // example: {"L": {missCount: 2, totalCount: 4, totalTime: 8.5}}
 var rawData = []; // example: [["L", 3.28, TRUE], ...] // letter timestamp missed
 var currTrial = 0;
@@ -44,8 +45,6 @@ var model = null;
 async function loadASLModel() {
     model = await tf.loadLayersModel('models/model.json');
 }
-
-var startTime, endTime;
 
 loadASLModel();
 
@@ -82,17 +81,18 @@ function transitionBgEnd() {
 
 function setUpGame() {
     currTrial++;
-    if (pickRandom) nameString = RAND_WORDLIST[Math.trunc(Math.random()*100)];
-    else nameString = document.getElementById("nameInp").value.toUpperCase();
+    if (!retrying) {
+        if (pickRandom) nameString = RAND_WORDLIST[Math.trunc(Math.random()*100)];
+        else nameString = document.getElementById("nameInp").value.toUpperCase();
+    }
+    else {
+        nameString = shuffle(nameString);
+    }
         
     // set up data dictionary for each unique letter
     Array.from(nameString).forEach(element => {
         if (!(element in data)) data[element] = {missCount:0, totalCount:0, totalTime:0.0};
     });
-
-    if (retrying) {
-        nameString = shuffle(nameString);
-    }
 
     document.getElementById("nameText").textContent = nameString;
     document.getElementById("winText").textContent = nameString;
@@ -341,14 +341,14 @@ function startTimer() {
 }
 
 function getTimeDiff() {
-    endTime = new Date();
+    var endTime = new Date();
     var timeDiff = endTime - startTime;
     startTime = endTime;
 
     // get time in seconds to 2 decimal places
     timeDiff = Math.round(timeDiff/10)/100;
     
-    console.log(timeDiff + " seconds");
+    // console.log(timeDiff + " seconds");
     return timeDiff
 }
 
