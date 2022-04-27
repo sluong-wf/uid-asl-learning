@@ -10,6 +10,7 @@ video.onplay = function() {
 document.getElementById("randomButton").addEventListener("click", function() { pickRandom = true; showGameScreen(); }, false);
 document.getElementById("startButton").addEventListener("click", showGameScreen, false);
 document.getElementById("goButton").addEventListener("click", startGame, false);
+document.getElementById("retryButton").addEventListener("click", retryGame, false);
 document.getElementById("restartButton").addEventListener("click", restartClicked, false);
 document.getElementById("resultsButton").addEventListener("click", showResultScreen, false);
 
@@ -24,16 +25,17 @@ var timerReset = false;
 var data = {}; // example: {"L": {missCount: 2, totalCount: 4, totalTime: 8.5}}
 var rawData = []; // example: [["L", 3.28, TRUE], ...] // letter timestamp missed
 var currTrial = 0;
+var retrying = false;
 
 function resetGameVars() {
     pickRandom = false; // whether user inputted a word or generating random
     curr = 0;
     moveX = 0;
     charPos = 0;
-    nameString = "";
     gameStarted = false;
     timerReset = false;
     iTimer = 0;
+    retrying = false
     document.getElementById("character").style.left = 0;
 }
 
@@ -79,17 +81,21 @@ function transitionBgEnd() {
 }
 
 function setUpGame() {
-    currTrial += 1;
+    currTrial++;
     if (pickRandom) nameString = RAND_WORDLIST[Math.trunc(Math.random()*100)];
     else nameString = document.getElementById("nameInp").value.toUpperCase();
-
-    document.getElementById("nameText").textContent = nameString;
-    document.getElementById("winText").textContent = nameString;
-
+        
     // set up data dictionary for each unique letter
     Array.from(nameString).forEach(element => {
         if (!(element in data)) data[element] = {missCount:0, totalCount:0, totalTime:0.0};
     });
+
+    if (retrying) {
+        nameString = shuffle(nameString);
+    }
+
+    document.getElementById("nameText").textContent = nameString;
+    document.getElementById("winText").textContent = nameString;
 
     // single-time setup for character movement
     moveX = 80.0/nameString.length;
@@ -225,11 +231,29 @@ function showEndState() {
     document.getElementById("bottomDisplay").style.display = "none";
     document.getElementById("winContainer").style.display = "block";
     document.getElementById("timerProgress").style.display = "none";
+    document.getElementById("retryButton").style.display = "block";
     document.getElementById("restartButton").style.display = "block";
     document.getElementById("resultsButton").style.display = "block";
 }
 
+function retryGame() {
+    resetGameVars();
+    retrying = true;
+    setUpGame();
+    loadCamera();
+    
+    document.getElementById("retryButton").style.display = "none";
+    document.getElementById("restartButton").style.display = "none";
+    document.getElementById("resultsButton").style.display = "none";
+
+    document.getElementById("goButton").style.display = "block";
+    document.getElementById("bottomDisplay").style.display = "block";
+    document.getElementById("instructionPanel").style.display = "block";
+    document.getElementById("winContainer").style.display = "none";
+}
+
 function restartClicked() {
+    document.getElementById("retryButton").style.display = "none";
     document.getElementById("restartButton").style.display = "none";
     document.getElementById("resultsButton").style.display = "none";
     transitionBgEnd(); 
@@ -352,4 +376,8 @@ function startTimerBar() {
       }
     }
   }
+}
+
+function shuffle(s) {
+    return [...s].sort(() => 0.5-Math.random()).join('');
 }
