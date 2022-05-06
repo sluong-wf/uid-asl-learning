@@ -260,3 +260,64 @@ h1.customTxt {
   flex-direction: row;
   justify-content: center;
 }
+
+#resultsText {
+  text-align: center;
+  font: 6vw monospace;
+  color: white;
+  text-shadow: 0.5vw 0.3vw #625565;
+  padding-top: 6vw;
+  margin-bottom: 15px;
+}
+
+#resultsContainer {
+  padding: 0vw 8vw 2vw;
+}
+
+#resultsTable {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: center;
+  overflow: auto;
+  background-color: rgba(25,53,80,0.05);
+  font: 3vw monospace;
+  color: white;
+}
+
+#resultsTable tr:nth-child(odd){
+  background-color: rgba(25,53,80,0.06);
+}
+
+#resultsTable tr {
+  border: 0.2vw solid rgb(143,211,255,0.32);
+}
+
+#resultsTable th {
+  padding-top: 1.2vw;
+  padding-bottom: 1.2vw;
+  background-color: rgb(25,53,80,0.25);
+  color: white;
+}
+
+#resultsTable td {
+  padding-top: 1vw;
+  padding-bottom: 1vw;
+}
+
+#detailsButton {
+  right: 8vw;
+  background-color: #3b79b4;
+  padding: 0.5vw 2vw;
+  background-repeat: no-repeat;
+  border: 2px solid rgb(111,183,240);
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+  font: 3.5vw monospace;
+  color: white;
+  position: absolute;
+}
+#detailsButton:hover {
+  color: #3471aa;
+  color: rgb(233, 233, 233);
+}

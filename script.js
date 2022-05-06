@@ -12,7 +12,8 @@ document.getElementById("startButton").addEventListener("click", showGameScreen,
 document.getElementById("goButton").addEventListener("click", startGame, false);
 document.getElementById("retryButton").addEventListener("click", retryGame, false);
 document.getElementById("restartButton").addEventListener("click", restartClicked, false);
-document.getElementById("resultsButton").addEventListener("click", showResultScreen, false);
+document.getElementById("resultsButton").addEventListener("click", viewResultsClicked, false);
+document.getElementById("detailsButton").addEventListener("click", displayRawData, false);
 
 // set up game variables
 var pickRandom = false; // whether user input a word or generating random
@@ -274,6 +275,9 @@ function restartGameViews() {
 }
 
 function viewResultsClicked() {
+    document.getElementById("retryButton").style.display = "none";
+    document.getElementById("restartButton").style.display = "none";
+    document.getElementById("resultsButton").style.display = "none";
     transitionBgEnd();
     setTimeout(showResultScreen, 2200);
 }
@@ -287,24 +291,30 @@ function showResultScreen() {
 
 function displayGameResults() {
     var keys = Object.keys(data);
-    keys.sort((a, b) => data[b].missCount - data[a].missCount)
+    keys.sort((a, b) => data[a].missCount - data[b].missCount)
 
-    var htmlString = "<p>SUMMARY:<br>";
+    var htmlString = "<tr><th>Letter</th><th>Accuracy</th><th>Average Time</th></tr>";
     keys.forEach(element => {
-        htmlString += "Letter " + element + " - You missed " + data[element].missCount + " times - Average time taken: " + 
-                      Math.round(data[element].totalTime/data[element].totalCount*100)/100 + "s. <br>";
+        var de = data[element];
+        htmlString += "<tr>";
+        htmlString += "<td>" + element + "</td>";
+        htmlString += "<td>" + Math.round((de.totalCount-de.missCount)/de.totalCount*100)+ "%</td>";
+        htmlString += "<td>" + Math.round(de.totalTime/de.totalCount*100)/100 + "s</td>";
+        htmlString += "</tr>"
     });
-    htmlString += "</p><br>";
 
+    document.getElementById("resultsTable").innerHTML = htmlString;
+}
+
+function displayRawData() {
     // RAW DATA
-    htmlString += "<p>TRIAL&emsp;LETTER&emsp;TIME&emsp;MISSED<br>";
+    var htmlString = "<p>TRIAL&emsp;LETTER&emsp;TIME&emsp;MISSED<br>";
     rawData.forEach(element => {
         htmlString += element.join(",") + "<br>";
     });
     htmlString += "</p>";
-
+    
     document.getElementById("resultsScreen").innerHTML = htmlString;
-
 }
 
 function getChar(x) {
